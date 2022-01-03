@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a1c915c570f68ee3b098826111a3701a",
+    "content-hash": "b232a8be2045e6ea5698fe3d8c66dc76",
     "packages": [
         {
             "name": "crell/api-problem",
@@ -1296,12 +1296,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/elifesciences/api-validator-php.git",
-                "reference": "0864db339c40bb77da11bb84b1e6394a2cd5e31b"
+                "reference": "b70d55f4b52adeefc83830f92fe571bbaa510461"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elifesciences/api-validator-php/zipball/0864db339c40bb77da11bb84b1e6394a2cd5e31b",
-                "reference": "0864db339c40bb77da11bb84b1e6394a2cd5e31b",
+                "url": "https://api.github.com/repos/elifesciences/api-validator-php/zipball/b70d55f4b52adeefc83830f92fe571bbaa510461",
+                "reference": "b70d55f4b52adeefc83830f92fe571bbaa510461",
                 "shasum": ""
             },
             "require": {
@@ -1333,7 +1333,7 @@
                 "MIT"
             ],
             "description": "eLife Sciences API validator",
-            "time": "2021-02-16T11:06:30+00:00"
+            "time": "2021-03-09T20:14:39+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1508,25 +1508,25 @@
         },
         {
             "name": "justinrainbow/json-schema",
-            "version": "5.1.0",
+            "version": "5.2.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/justinrainbow/json-schema.git",
-                "reference": "48817e5f95c9d29e11513f12e43cc0223fa5eb6c"
+                "reference": "2ab6744b7296ded80f8cc4f9509abbff393399aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/48817e5f95c9d29e11513f12e43cc0223fa5eb6c",
-                "reference": "48817e5f95c9d29e11513f12e43cc0223fa5eb6c",
+                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/2ab6744b7296ded80f8cc4f9509abbff393399aa",
+                "reference": "2ab6744b7296ded80f8cc4f9509abbff393399aa",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
+                "friendsofphp/php-cs-fixer": "~2.2.20||~2.15.1",
                 "json-schema/json-schema-test-suite": "1.2.0",
-                "phpdocumentor/phpdocumentor": "~2",
-                "phpunit/phpunit": "^4.8.22"
+                "phpunit/phpunit": "^4.8.35"
             },
             "bin": [
                 "bin/validate-json"
@@ -1570,7 +1570,7 @@
                 "json",
                 "schema"
             ],
-            "time": "2017-02-22T03:28:16+00:00"
+            "time": "2021-07-22T09:24:00+00:00"
         },
         {
             "name": "myclabs/deep-copy",
