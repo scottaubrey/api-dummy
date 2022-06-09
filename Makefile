@@ -15,6 +15,8 @@ test: build
 	docker run --rm $(REPO_PREFIX):tests
 	docker image rm $(REPO_PREFIX):tests
 	$(DOCKER_COMPOSE_CMD) up -d
+	ls
+	docker ps
 	docker cp smoke_tests.sh api-dummy-app-1:/
 	docker exec api-dummy-app-1 /smoke_tests.sh
 	$(DOCKER_COMPOSE_CMD) down --remove-orphans --volumes --rmi all || true
