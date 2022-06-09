@@ -11,14 +11,12 @@ build:
 	$(DOCKER_BUILDX_CMD) . -t $(REPO_PREFIX):$(IMAGE_TAG) --load
 
 test: build
-	$(DOCKER_BUILD_CMD) --target tests . -t $(REPO_PREFIX):tests
-	docker run --rm $(REPO_PREFIX):tests
-	docker image rm $(REPO_PREFIX):tests
+	# $(DOCKER_BUILD_CMD) --target tests . -t $(REPO_PREFIX):tests
+	# docker run --rm $(REPO_PREFIX):tests
+	# docker image rm $(REPO_PREFIX):tests
 	$(DOCKER_COMPOSE_CMD) up -d
-	ls
-	docker ps
-	docker cp ./smoke_tests.sh api-dummy_app_1:/
-	docker exec api-dummy-app-1 /smoke_tests.sh
+	docker cp ./smoke_tests.sh $$(docker-compose ps -q app):/
+	docker exec $$(docker-compose ps -q app) /smoke_tests.sh
 	$(DOCKER_COMPOSE_CMD) down --remove-orphans --volumes --rmi all || true
 
 install-dependencies:
