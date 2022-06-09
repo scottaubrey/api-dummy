@@ -1,12 +1,12 @@
 # COMPOSER generate autoloader and vendor files
-FROM composer:1.10.26@sha256:fe444042ba632036111ad4b28a55594126e7fdd7c989d55876c095099aed657f as build
+FROM composer:2.2.1@sha256:3aab311114daad07d7a1c8331cc3a21265496066320fc7cd22203434f636e6bb as build
 COPY composer.json composer.lock ./
 COPY test/ test/
 RUN composer --no-interaction install --classmap-authoritative --no-suggest --prefer-dist
 
 
 # build the main image here
-FROM elifesciences/php_7.0_cli:656bb4bdf1e49a5e80337e2a7c4f44f10c3f52b0 as image
+FROM ghcr.io/scottaubrey/elifesciences-php:7.4-cli@sha256:d31c30fec8e4f89c6a51c4e6d46ec7740a263abd7acd391aceeadddecd86d32b as image
 
 USER root
 ENV PROJECT_FOLDER=/srv/api-dummy
