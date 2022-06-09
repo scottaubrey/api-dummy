@@ -17,7 +17,7 @@ test: build
 	$(DOCKER_COMPOSE_CMD) up -d
 	ls
 	docker ps
-	docker cp smoke_tests.sh api-dummy-app-1:/
+	docker cp ./smoke_tests.sh api-dummy_app_1:/
 	docker exec api-dummy-app-1 /smoke_tests.sh
 	$(DOCKER_COMPOSE_CMD) down --remove-orphans --volumes --rmi all || true
 
