@@ -32,4 +32,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: run docker buildx and push images
-        run: make IMAGE_TAG=${GITHUB_SHA} REPO_PREFIX=${{ env.REGISTRY }}/${{ env.REPO_PREFIX }} buildx-and-push
+        run: make IMAGE_TAG=${GITHUB_REF_NAME}-${GITHUB_SHA}-$(date --utc +%Y%m%d.%H%M) REPO_PREFIX=${{ env.REGISTRY }}/${{ env.REPO_PREFIX }} buildx-and-push
