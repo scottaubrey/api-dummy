@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install Compose
-        uses: ndeloof/install-docker-compose@main
+        uses: ndeloof/install-compose-action@main
         with:
           legacy: true
       - name: Set up QEMU
