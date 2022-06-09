@@ -15,8 +15,8 @@ test: build
 	# docker run --rm $(REPO_PREFIX):tests
 	# docker image rm $(REPO_PREFIX):tests
 	$(DOCKER_COMPOSE_CMD) up -d
-	docker cp ./smoke_tests.sh $$(docker-compose ps -q app):/
-	docker exec $$(docker-compose ps -q app) /smoke_tests.sh
+	$(DOCKER_COMPOSE_CMD) cp ./smoke_tests.sh app:/
+	$(DOCKER_COMPOSE_CMD) exec app /smoke_tests.sh
 	$(DOCKER_COMPOSE_CMD) down --remove-orphans --volumes --rmi all || true
 
 install-dependencies:
