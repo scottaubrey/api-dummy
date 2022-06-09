@@ -10,6 +10,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install Compose
+        uses: ndeloof/install-docker-compose
+        with:
+          legacy: true
       - name: run docker build
         run: make build
       - name: test docker image
