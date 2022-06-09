@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile.combined
+        ports:
+            - "8080:8080"
+        command: php -S 0.0.0.0:8080 -t web/ -d opcache.enable=0
+        volumes:
+            - ./src:/srv/api-dummy/src
+            - ./data:/srv/api-dummy/data
+            - ./test:/srv/api-dummy/test
+    # Local-only commands to run to use this project's directories as a bind-mounted shared filesystem
+    composer:
+        profiles:
+            - dependencies
+        build:
+            context: .
+            target: build
+            dockerfile: Dockerfile.combined
+        command: composer install
+        volumes:
+            # composer input files
+            - ./composer.json:/app/composer.json
+            - ./composer.lock:/app/composer.lock
+
+            # composer output directory
+            - ./vendor:/app/vendor:rw
