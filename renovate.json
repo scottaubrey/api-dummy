@@ -3,5 +3,13 @@
         "config:base",
         ":preserveSemverRanges"
     ],
-    "baseBranches": ["develop"]
+    "baseBranches": ["develop"],
+    "ignorePaths": [
+        "Dockerfile",
+        "Dockerfile.ci",
+        "Dockerfile.composer",
+        "docker-compose.ci.yml",
+        "docker-compose.override.yml",
+        "docker-compose.yml"
+    ]
 }
