@@ -11,7 +11,6 @@
         "composer.json"
     ],
     "ignorePaths": [
-        "Dockerfile",
         "Dockerfile.ci",
         "Dockerfile.composer",
         "docker-compose.ci.yml",
