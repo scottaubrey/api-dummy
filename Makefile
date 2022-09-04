@@ -31,7 +31,7 @@ reset:
 	rm -Rf vendor/* || true
 
 buildx-and-push:
-	$(DOCKER_BUILDX_CMD) --push --platform linux/amd64,linux/arm64 . -t $(REPO_PREFIX):$(IMAGE_TAG)
+	$(DOCKER_BUILDX_CMD) --push --platform linux/amd64,linux/arm64 . -t $(REPO_PREFIX):$(IMAGE_TAG) -t $(REPO_PREFIX):latest
 
 
 .PHONY: test build push
