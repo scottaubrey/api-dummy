@@ -1,5 +1,6 @@
 {
     "title": "Fossilised fish and cardiac evolution",
+    "impactStatement": "",
     "image": {
         "uri": "https://iiif.elifesciences.org/lax/14698%2Felife-14698-fig1-v1.tif",
         "source": {
@@ -20,7 +21,7 @@
         "version": 1,
         "type": "research-article",
         "doi": "10.7554/eLife.14698",
-        "authorLine": "Lara Maldanis et al.",
+        "authorLine": "Lara Maldanis, Murilo Carvalho ... José Xavier-Neto",
         "title": "Heart fossilization is possible and informs the evolution of cardiac outflow tract in vertebrates",
         "published": "2016-04-19T00:00:00Z",
         "versionDate": "2016-04-19T00:00:00Z",

@@ -1,5 +1,6 @@
 {
     "title": "A tale of two circuits",
+    "impactStatement": "Single-cell RNA sequencing identifies an adult regional gene expression map in planarian muscle that includes two FGFRL-Wnt circuits controlling head and trunk tissue pattern.",
     "image": {
         "uri": "https://iiif.elifesciences.org/lax/12845%2Felife-12845-fig1-v2.tif",
         "source": {
@@ -20,7 +21,7 @@
         "version": 1,
         "type": "research-article",
         "doi": "10.7554/eLife.12845",
-        "authorLine": "M Lucila Scimone et al.",
+        "authorLine": "M Lucila Scimone, Lauren E Cote ... Peter W Reddien",
         "title": "Two FGFRL-Wnt circuits organize the planarian anteroposterior axis",
         "published": "2016-04-11T00:00:00Z",
         "versionDate": "2016-04-11T00:00:00Z",

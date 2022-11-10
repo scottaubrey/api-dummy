@@ -425,26 +425,32 @@ final class SmokeTest extends TestCase
                 'application/vnd.elife.subject+json; version=1',
             ];
         }
-        yield $path = '/search?type[]=reviewed-preprint' => [
-            $this->createRequest($path, 'application/vnd.elife.search+json; version=2'),
-            'application/vnd.elife.search+json; version=2'
-        ];
-        yield $path = '/search' => [
-            $this->createRequest($path, 'application/vnd.elife.search+json; version=1'),
-            'application/vnd.elife.search+json; version=1'
-        ];
-        yield $path = '/search?for=cell' => [
-            $this->createRequest($path, 'application/vnd.elife.search+json; version=1'),
-            'application/vnd.elife.search+json; version=1',
-        ];
-        yield $path = '/search?subject[]=cell-biology' => [
-            $this->createRequest($path, 'application/vnd.elife.search+json; version=1'),
-            'application/vnd.elife.search+json; version=1',
-        ];
-        yield $path = '/search?start-date=2017-01-01&end-date=2017-01-01' => [
-            $this->createRequest($path, 'application/vnd.elife.search+json; version=1'),
-            'application/vnd.elife.search+json; version=1',
-        ];
+
+        foreach ([2, 1] as $version) {
+            yield $path = '/search?type[]=reviewed-preprint' => [
+                $this->createRequest($path, 'application/vnd.elife.search+json; version='.$version),
+                'application/vnd.elife.search+json; version='.$version,
+                200,
+                [],
+                1 === $version ? 0 : null,
+            ];
+            yield $path = '/search' => [
+                $this->createRequest($path, 'application/vnd.elife.search+json; version='.$version),
+                'application/vnd.elife.search+json; version='.$version,
+            ];
+            yield $path = '/search?for=cell' => [
+                $this->createRequest($path, 'application/vnd.elife.search+json; version='.$version),
+                'application/vnd.elife.search+json; version='.$version,
+            ];
+            yield $path = '/search?subject[]=cell-biology' => [
+                $this->createRequest($path, 'application/vnd.elife.search+json; version='.$version),
+                'application/vnd.elife.search+json; version='.$version,
+            ];
+            yield $path = '/search?start-date=2017-01-01&end-date=2017-01-01' => [
+                $this->createRequest($path, 'application/vnd.elife.search+json; version='.$version),
+                'application/vnd.elife.search+json; version='.$version,
+            ];
+        }
         yield $path = '/search?start-date=2017-02-29' => [
             $this->createRequest($path),
             'application/problem+json',
@@ -460,27 +466,5 @@ final class SmokeTest extends TestCase
             'application/problem+json',
             400,
         ];
-    }
-
-    /**
-     * @test
-     */
-    public function search_v2_has_reviewed_preprint()
-    {
-        $request = $this->createRequest('/search?type[]=reviewed-preprint', 'application/vnd.elife.search+json;version=2');
-        $response = $this->getApp()->handle($request);
-        $this->assertContains('"id": "09560"', $response->getContent());
-    }
-
-    /**
-     * @test
-     */
-    public function search_v1_does_not_have_reviewed_preprint()
-    {
-        $request = $this->createRequest('/search?type[]=reviewed-preprint', 'application/vnd.elife.search+json; version=1');
-        $response = $this->getApp()->handle($request);
-        $content = json_decode($response->getContent(), true);
-        $this->assertArrayNotHasKey("reviewed-preprint", $content['types']);
-        $this->assertEquals(0, $content['total']);
     }
 }

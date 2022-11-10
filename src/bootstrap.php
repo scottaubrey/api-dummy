@@ -166,7 +166,7 @@ $app['reviewed-preprints'] = function () use ($grabData) {
 
         uasort($preprints, function (array $a, array $b) {
             return DateTimeImmutable::createFromFormat(DATE_ATOM,
-                    $b['statusDate']) <=> DateTimeImmutable::createFromFormat(DATE_ATOM, $a['statusDate']);
+                    $b['published']) <=> DateTimeImmutable::createFromFormat(DATE_ATOM, $a['published']);
         });
 
         return $preprints;
@@ -1109,14 +1109,12 @@ $app->get('/covers', function (Request $request, Accept $type) use ($app) {
 ));
 
 $app->get('/covers/current', function (Accept $type) use ($app) {
-    $covers = $app['covers'];
+    $covers = array_slice(array_reverse($app['covers']), 0, 4);
 
     $content = [
         'total' => count($covers),
         'items' => [],
     ];
-
-    $covers = array_slice(array_reverse($covers), 0, 3);
 
     foreach ($covers as $i => $report) {
         unset($report['content']);
@@ -2007,10 +2005,6 @@ $app->get('/reviewed-preprints', function(Request $request, Accept $type) use ($
     $page = $request->query->get('page', 1);
     $perPage = $request->query->get('per-page', 10);
 
-    if ('desc' === $request->query->get('order', 'desc')) {
-        $reviewedPreprints = array_reverse($reviewedPreprints);
-    }
-
     $reviewedPreprints = array_slice($reviewedPreprints, ($page * $perPage) - $perPage, $perPage);
 
     if (0 === count($reviewedPreprints) && $page > 1) {
@@ -2021,6 +2015,10 @@ $app->get('/reviewed-preprints', function(Request $request, Accept $type) use ($
         'total' => count($reviewedPreprints),
         'items' => []
     ];
+
+    if ('asc' === $request->query->get('order', 'desc')) {
+        $reviewedPreprints = array_reverse($reviewedPreprints);
+    }
 
     foreach ($reviewedPreprints as $id => $reviewedPreprint) {
         unset($reviewedPreprint['indexContent']);
@@ -2091,6 +2089,13 @@ $app->get('/search', function (Request $request, Accept $type) use ($app) {
                 $latest = $articleVersion;
             }
         }
+        if ($type->getParameter('version') === '2' && isset($app['reviewed-preprints'][$latest['id']])) {
+            $reviewedPreprint = $app['reviewed-preprints'][$latest['id']];
+            $latest['reviewedDate'] = $reviewedPreprint['reviewedDate'];
+            if (!empty($reviewedPreprint['curationLabels'])) {
+                $latest['curationLabels'] = $reviewedPreprint['curationLabels'];
+            }
+        }
         $result = $latest;
         $result['_search'] = strtolower(json_encode($latest));
 
@@ -2133,13 +2138,15 @@ $app->get('/search', function (Request $request, Accept $type) use ($app) {
         'podcast-episode',
     ];
 
-    if ($type->getParameter('version') === "2") {
+    if ($type->getParameter('version') === '2') {
         foreach ($app['reviewed-preprints'] as $result) {
-            $result['_search'] = strtolower(json_encode($result));
-            unset($result['indexContent']);
-            $result['type'] = 'reviewed-preprint';
-            $result['_sort_date'] = DateTimeImmutable::createFromFormat(DATE_ATOM, $result['statusDate']);
-            $results[] = $result;
+            if (!isset($app['articles'][$result['id']])) {
+                $result['_search'] = strtolower(json_encode($result));
+                unset($result['indexContent']);
+                $result['type'] = 'reviewed-preprint';
+                $result['_sort_date'] = DateTimeImmutable::createFromFormat(DATE_ATOM, $result['statusDate']);
+                $results[] = $result;
+            }
         }
         $contentTypes[] = 'reviewed-preprint';
     }
@@ -2228,24 +2235,29 @@ $app->get('/search', function (Request $request, Accept $type) use ($app) {
         ];
     });
 
+    $allTypeKeys = [
+        'correction',
+        'editorial',
+        'feature',
+        'insight',
+        'research-advance',
+        'research-article',
+        'research-communication',
+        'retraction',
+        'registered-report',
+        'replication-study',
+        'review-article',
+        'scientific-correspondence',
+        'short-report',
+        'tools-resources',
+    ];
+
+    if ($type->getParameter('version') === '2') {
+        $allTypeKeys[] = 'reviewed-preprint';
+    }
     $allTypes = [];
     foreach (
-        [
-            'correction',
-            'editorial',
-            'feature',
-            'insight',
-            'research-advance',
-            'research-article',
-            'research-communication',
-            'retraction',
-            'registered-report',
-            'replication-study',
-            'review-article',
-            'scientific-correspondence',
-            'short-report',
-            'tools-resources',
-        ] as $articleType
+      $allTypeKeys as $articleType
     ) {
         $allTypes[$articleType] = count(array_filter($results, function ($result) use ($articleType) {
             return $articleType === $result['type'];

@@ -1,5 +1,6 @@
 {
     "title": "The importance of haem for ticks",
+    "impactStatement": "The lack of haem biosynthetic and degradative pathways in ticks offers new strategies to combat these parasites.",
     "image": {
         "uri": "https://iiif.elifesciences.org/lax/12318%2Felife-12318-fig1-v2.tif",
         "source": {
@@ -20,7 +21,7 @@
         "version": 1,
         "type": "research-article",
         "doi": "10.7554/eLife.12318",
-        "authorLine": "Jan Perner et al.",
+        "authorLine": "Jan Perner, Roman Sobotka ... Petr Kopacek",
         "title": "Acquisition of exogenous haem is essential for tick reproduction",
         "published": "2016-03-07T00:00:00Z",
         "versionDate": "2016-03-07T00:00:00Z",
