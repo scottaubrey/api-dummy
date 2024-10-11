@@ -30,6 +30,23 @@ final class SmokeTest extends TestCase
             ];
         }
 
+        foreach ((new Finder())->files()->name('*.json')->in(__DIR__.'/../data/recommendations') as $file) {
+            $name = explode('-', $file->getBasename('.json'));
+
+            yield $path = "/recommendations/${name[0]}/${name[1]}" => [
+                $this->createRequest($path),
+                'application/vnd.elife.recommendations+json; version=3',
+            ];
+
+            if ('13410' === $name[1]) {
+                yield $path = "/recommendations/${name[0]}/${name[1]}" => [
+                    $this->createRequest($path, 'application/vnd.elife.recommendations+json; version=2'),
+                    'application/problem+json',
+                    406,
+                ];
+            }
+        }
+
         yield '/annual-reports wrong version' => [
           $this->createRequest('/annual-reports', 'application/vnd.elife.annual-report-list+json; version=1'),
           'application/problem+json',
@@ -60,19 +77,19 @@ final class SmokeTest extends TestCase
         foreach ((new Finder())->files()->name('*.json')->in(__DIR__.'/../data/articles') as $file) {
             $path = '/articles/'.$file->getBasename('.json');
             switch ($file->getBasename('.json')) {
-                case '04395':
-                    $poaMinimum = 3;
+                case '55774':
+                    $vorMinimum = 8;
                     break;
                 default:
-                    $poaMinimum = 2;
-                    $vorMinimum = 5;
+                    $poaMinimum = 3;
+                    $vorMinimum = 7;
             }
 
             yield "{$path} version highest" => [
                 $this->createRequest($path),
                 [
-                    'application/vnd.elife.article-poa+json; version=3',
-                    'application/vnd.elife.article-vor+json; version=6',
+                    'application/vnd.elife.article-poa+json; version=4',
+                    'application/vnd.elife.article-vor+json; version=8',
                 ],
             ];
             yield "{$path} version lowest" => [
@@ -83,8 +100,8 @@ final class SmokeTest extends TestCase
                 ],
                 200,
                 [
-                    'application/vnd.elife.article-poa+json; version=2' => '299 elifesciences.org "Deprecation: Support for version 2 will be removed"',
-                    'application/vnd.elife.article-vor+json; version=5' => '299 elifesciences.org "Deprecation: Support for version 5 will be removed"',
+                    'application/vnd.elife.article-poa+json; version=3' => '299 elifesciences.org "Deprecation: Support for version 3 will be removed"',
+                    'application/vnd.elife.article-vor+json; version=7' => '299 elifesciences.org "Deprecation: Support for version 7 will be removed"',
                 ],
             ];
 
@@ -104,11 +121,12 @@ final class SmokeTest extends TestCase
                 'application/problem+json',
                 406,
             ];
+
             yield "{$path} version highest" => [
                 $this->createRequest($path),
                 [
-                    'application/vnd.elife.article-poa+json; version=3',
-                    'application/vnd.elife.article-vor+json; version=6',
+                    'application/vnd.elife.article-poa+json; version=4',
+                    'application/vnd.elife.article-vor+json; version=8',
                 ],
             ];
             yield "{$path} version lowest" => [
@@ -119,15 +137,28 @@ final class SmokeTest extends TestCase
                 ],
                 200,
                 [
-                    'application/vnd.elife.article-poa+json; version=2' => '299 elifesciences.org "Deprecation: Support for version 2 will be removed"',
-                    'application/vnd.elife.article-vor+json; version=5' => '299 elifesciences.org "Deprecation: Support for version 5 will be removed"',
+                    'application/vnd.elife.article-poa+json; version=3' => '299 elifesciences.org "Deprecation: Support for version 3 will be removed"',
+                    'application/vnd.elife.article-vor+json; version=7' => '299 elifesciences.org "Deprecation: Support for version 7 will be removed"',
                 ],
             ];
 
             yield $path = '/articles/'.$file->getBasename('.json').'/related' => [
                 $this->createRequest($path),
-                'application/vnd.elife.article-related+json; version=1',
+                'application/vnd.elife.article-related+json; version=2',
             ];
+
+            if ('13410' === $file->getBasename('.json')) {
+                yield $path = '/articles/'.$file->getBasename('.json').'/related' => [
+                    $this->createRequest($path, 'application/vnd.elife.article-related+json; version=1'),
+                    'application/problem+json',
+                    406
+                ];
+            } else {
+                yield $path = '/articles/'.$file->getBasename('.json').'/related' => [
+                    $this->createRequest($path, 'application/vnd.elife.article-related+json; version=1'),
+                    'application/vnd.elife.article-related+json; version=1',
+                ];
+            }
         }
 
         foreach ((new Finder())->files()->name('*.json')->in(__DIR__.'/../data/bioprotocols') as $file) {
@@ -154,6 +185,10 @@ final class SmokeTest extends TestCase
                 yield "{$path} version 1" => [
                     $this->createRequest($path, 'application/vnd.elife.blog-article+json; version=1'),
                     'application/vnd.elife.blog-article+json; version=1',
+                    200,
+                    [
+                        'application/vnd.elife.blog-article+json; version=1' => '299 elifesciences.org "Deprecation: Support for version 1 will be removed"',
+                    ],
                 ];
             } else {
                 yield "{$path} version 1" => [
@@ -170,14 +205,27 @@ final class SmokeTest extends TestCase
         ];
         foreach ((new Finder())->files()->name('*.json')->in(__DIR__.'/../data/collections') as $file) {
             $path = '/collections/'.$file->getBasename('.json');
-            yield "{$path} version 2" => [
+
+            yield "{$path} version 3" => [
                 $this->createRequest($path),
-                'application/vnd.elife.collection+json; version=2',
+                'application/vnd.elife.collection+json; version=3',
             ];
-            yield "{$path} version 1" => [
-                $this->createRequest($path, 'application/vnd.elife.collection+json; version=1'),
-                'application/vnd.elife.collection+json; version=1',
-            ];
+            if ('with-reviewed-preprint' === $file->getBasename('.json')) {
+                yield "{$path} version 2" => [
+                    $this->createRequest($path, 'application/vnd.elife.collection+json; version=2'),
+                    'application/problem+json',
+                    406,
+                ];
+            } else {
+                yield "{$path} version 2" => [
+                    $this->createRequest($path, 'application/vnd.elife.collection+json; version=2'),
+                    'application/vnd.elife.collection+json; version=2',
+                    200,
+                    [
+                        'application/vnd.elife.collection+json; version=2' => '299 elifesciences.org "Deprecation: Support for version 2 will be removed"',
+                    ],
+                ];
+            }
         }
 
         yield $path = '/community' => [
@@ -238,6 +286,10 @@ final class SmokeTest extends TestCase
             yield "{$path} version 1" => [
                 $this->createRequest($path, 'application/vnd.elife.event+json; version=1'),
                 'application/vnd.elife.event+json; version=1',
+                200,
+                [
+                    'application/vnd.elife.event+json; version=1' => '299 elifesciences.org "Deprecation: Support for version 1 will be removed"',
+                ],
             ];
         }
 
@@ -250,10 +302,10 @@ final class SmokeTest extends TestCase
             yield "{$path} version 2" => [
                 $this->createRequest($path, 'application/vnd.elife.highlight-list+json; version=2'),
                 'application/vnd.elife.highlight-list+json; version=2',
-            ];
-            yield "{$path} version 1" => [
-                $this->createRequest($path, 'application/vnd.elife.highlight-list+json; version=1'),
-                'application/vnd.elife.highlight-list+json; version=1',
+                200,
+                [
+                    'application/vnd.elife.highlight-list+json; version=2' => '299 elifesciences.org "Deprecation: Support for version 2 will be removed"',
+                ],
             ];
         }
 
@@ -271,6 +323,10 @@ final class SmokeTest extends TestCase
             yield "{$path} version 1" => [
                 $this->createRequest($path, 'application/vnd.elife.interview+json; version=1'),
                 'application/vnd.elife.interview+json; version=1',
+                200,
+                [
+                    'application/vnd.elife.interview+json; version=1' => '299 elifesciences.org "Deprecation: Support for version 1 will be removed"',
+                ],
             ];
         }
 
@@ -300,6 +356,10 @@ final class SmokeTest extends TestCase
                 yield "{$path} version 1" => [
                     $this->createRequest($path, 'application/vnd.elife.labs-post+json; version=1'),
                     'application/vnd.elife.labs-post+json; version=1',
+                    200,
+                    [
+                        'application/vnd.elife.labs-post+json; version=1' => '299 elifesciences.org "Deprecation: Support for version 1 will be removed"',
+                    ],
                 ];
             } else {
                 yield "{$path} version 1" => [
@@ -354,30 +414,26 @@ final class SmokeTest extends TestCase
             'application/vnd.elife.press-package-list+json; version=1',
         ];
         foreach ((new Finder())->files()->name('*.json')->in(__DIR__.'/../data/press-packages') as $file) {
-            $path = $path = '/press-packages/'.$file->getBasename('.json');
+            $path = '/press-packages/'.$file->getBasename('.json');
 
-            yield "{$path} version 3" => [
+            yield "{$path} version 4" => [
                 $this->createRequest($path),
-                'application/vnd.elife.press-package+json; version=3',
+                'application/vnd.elife.press-package+json; version=4',
             ];
-            yield "{$path} version 2" => [
-                $this->createRequest($path, 'application/vnd.elife.press-package+json; version=2'),
-                'application/vnd.elife.press-package+json; version=2',
-            ];
-            if (!empty(json_decode($file->getContents(), true)['relatedContent'])) {
-                yield "{$path} version 1" => [
-                    $this->createRequest($path, 'application/vnd.elife.press-package+json; version=1'),
-                    'application/vnd.elife.press-package+json; version=1',
-                    200,
-                    [
-                        'application/vnd.elife.press-package+json; version=1' => '299 elifesciences.org "Deprecation: Support for version 1 will be removed"',
-                    ],
-                ];
-            } else {
-                yield "{$path} version 1" => [
-                    $this->createRequest($path, 'application/vnd.elife.press-package+json; version=1'),
+            if ('6b266861' === $file->getBasename('.json')) {
+                yield "{$path} version 3" => [
+                    $this->createRequest($path, 'application/vnd.elife.press-package+json; version=3'),
                     'application/problem+json',
                     406,
+                ];
+            } else {
+                yield "{$path} version 3" => [
+                    $this->createRequest($path, 'application/vnd.elife.press-package+json; version=3'),
+                    'application/vnd.elife.press-package+json; version=3',
+                    200,
+                    [
+                        'application/vnd.elife.press-package+json; version=3' => '299 elifesciences.org "Deprecation: Support for version 3 will be removed"',
+                    ],
                 ];
             }
         }
@@ -398,10 +454,28 @@ final class SmokeTest extends TestCase
             'application/vnd.elife.promotional-collection-list+json; version=1',
         ];
         foreach ((new Finder())->files()->name('*.json')->in(__DIR__.'/../data/promotional-collections') as $file) {
-            yield $path = '/promotional-collections/'.$file->getBasename('.json') => [
-                $this->createRequest($path, 'application/vnd.elife.promotional-collection+json; version=1'),
-                'application/vnd.elife.promotional-collection+json; version=1',
+            $path = '/promotional-collections/'.$file->getBasename('.json');
+
+            yield "{$path} version 2" => [
+                $this->createRequest($path),
+                'application/vnd.elife.promotional-collection+json; version=2',
             ];
+            if ('highlights-japan' === $file->getBasename('.json')) {
+                yield "{$path} version 1" => [
+                    $this->createRequest($path, 'application/vnd.elife.promotional-collection+json; version=1'),
+                    'application/problem+json',
+                    406,
+                ];
+            } else {
+                yield "{$path} version 1" => [
+                    $this->createRequest($path, 'application/vnd.elife.promotional-collection+json; version=1'),
+                    'application/vnd.elife.promotional-collection+json; version=1',
+                    200,
+                    [
+                        'application/vnd.elife.promotional-collection+json; version=1' => '299 elifesciences.org "Deprecation: Support for version 1 will be removed"',
+                    ],
+                ];
+            }
         }
 
         yield $path = '/reviewed-preprints' => [
@@ -414,6 +488,26 @@ final class SmokeTest extends TestCase
                 'application/vnd.elife.reviewed-preprint+json; version=1',
             ];
         }
+        yield $path = '/reviewed-preprints?start-date=2017-01-01&end-date=2017-01-01' => [
+            $this->createRequest($path),
+            'application/vnd.elife.reviewed-preprint-list+json; version=1',
+        ];
+        yield $path = '/reviewed-preprints?start-date=2017-02-29' => [
+            $this->createRequest($path),
+            'application/problem+json',
+            400,
+        ];
+        yield $path = '/reviewed-preprints?end-date=2017-02-29' => [
+            $this->createRequest($path),
+            'application/problem+json',
+            400,
+        ];
+        yield $path = '/reviewed-preprints?start-date=2017-01-02&end-date=2017-01-01' => [
+            $this->createRequest($path),
+            'application/problem+json',
+            400,
+        ];
+
 
         yield $path = '/subjects' => [
             $this->createRequest($path),
@@ -427,28 +521,39 @@ final class SmokeTest extends TestCase
         }
 
         foreach ([2, 1] as $version) {
+            $warning = 1 === $version ? [
+                'application/vnd.elife.search+json; version=1' => '299 elifesciences.org "Deprecation: Support for version 1 will be removed"',
+            ] : [];
             yield $path = '/search?type[]=reviewed-preprint' => [
                 $this->createRequest($path, 'application/vnd.elife.search+json; version='.$version),
                 'application/vnd.elife.search+json; version='.$version,
                 200,
-                [],
+                $warning,
                 1 === $version ? 0 : null,
             ];
             yield $path = '/search' => [
                 $this->createRequest($path, 'application/vnd.elife.search+json; version='.$version),
                 'application/vnd.elife.search+json; version='.$version,
+                200,
+                $warning,
             ];
             yield $path = '/search?for=cell' => [
                 $this->createRequest($path, 'application/vnd.elife.search+json; version='.$version),
                 'application/vnd.elife.search+json; version='.$version,
+                200,
+                $warning,
             ];
             yield $path = '/search?subject[]=cell-biology' => [
                 $this->createRequest($path, 'application/vnd.elife.search+json; version='.$version),
                 'application/vnd.elife.search+json; version='.$version,
+                200,
+                $warning,
             ];
             yield $path = '/search?start-date=2017-01-01&end-date=2017-01-01' => [
                 $this->createRequest($path, 'application/vnd.elife.search+json; version='.$version),
                 'application/vnd.elife.search+json; version='.$version,
+                200,
+                $warning,
             ];
         }
         yield $path = '/search?start-date=2017-02-29' => [
