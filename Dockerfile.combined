@@ -6,7 +6,7 @@ RUN composer --no-interaction install --classmap-authoritative --no-suggest --pr
 
 
 # build the main image here
-FROM ghcr.io/scottaubrey/elifesciences-php:7.4-cli@sha256:7ea68557f993c6738d040f762a9e119a4de0b38cbd2c55d44695b313925f8888 as image
+FROM ghcr.io/scottaubrey/elifesciences-php:8.3-cli@sha256:dd08b5140c8b834ea9ab5a0d1db330c0a25b65bed929bcb92353f9584d1eaec1 as image
 
 USER root
 ENV PROJECT_FOLDER=/srv/api-dummy
