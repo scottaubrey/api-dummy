@@ -1,5 +1,5 @@
 # COMPOSER generate autoloader and vendor files
-FROM composer:2.4.1@sha256:5a83f661a80dfb67e90f4400101130501569cf7a3ee996f2e39ac48beb73c444 as build
+FROM composer:2.9.5@sha256:743aebe48ca67097c36819040633ea77e44a561eca135e4fc84c002e63a1ba07 as build
 COPY composer.json composer.lock ./
 COPY test/ test/
 RUN composer --no-interaction install --classmap-authoritative --no-suggest --prefer-dist
